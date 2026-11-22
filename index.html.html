@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f172a">
+<meta name="description" content="ই-বাইক সেভিংস ট্র্যাকার - আপনার সাশ্রয় হিসাব রাখুন">
+<title>E-Bike Savings Tracker ⚡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg-deep: #060d1a;
+    --bg-card: #0d1f35;
+    --bg-card2: #101e33;
+    --bg-input: #0a1828;
+    --border: rgba(255,255,255,0.07);
+    --border-bright: rgba(255,255,255,0.14);
+    --text-primary: #e8f0fe;
+    --text-secondary: #7fa5c8;
+    --text-muted: #4a6a8a;
+    --green: #16a34a;
+    --green-bright: #22c55e;
+    --green-glow: rgba(34,197,94,0.15);
+    --blue: #2563eb;
+    --blue-bright: #60a5fa;
+    --blue-glow: rgba(96,165,250,0.15);
+    --purple: #7c3aed;
+    --purple-bright: #a78bfa;
+    --purple-glow: rgba(167,139,250,0.15);
+    --red: #dc2626;
+    --red-bright: #f87171;
+    --yellow: #d97706;
+    --yellow-bright: #fbbf24;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    --shadow-lg: 0 8px 48px rgba(0,0,0,0.6);
+    --font: 'Hind Siliguri', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+    --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(37,99,235,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 90% 80%, rgba(124,58,237,0.08) 0%, transparent 50%);
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    background: rgba(13,31,53,0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+  }
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 0 20px rgba(34,197,94,0.3);
+  }
+  .header-actions { display: flex; gap: 8px; }
+  .btn-icon {
+    width: 38px; height: 38px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    transition: var(--transition);
+  }
+  .btn-icon:hover { border-color: var(--border-bright); color: var(--text-primary); background: var(--bg-card2); }
+
+  /* ─── MAIN LAYOUT ─── */
+  main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px 16px 80px;
+  }
+
+  /* ─── SECTION TITLE ─── */
+  .section-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    padding-left: 2px;
+  }
+
+  /* ─── REPORT CARDS ─── */
+  .report-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 500px) {
+    .report-grid { grid-template-columns: 1fr; gap: 10px; }
+  }
+
+  .report-card {
+    border-radius: var(--radius);
+    padding: 20px 18px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid transparent;
+    transition: var(--transition);
+  }
+  .report-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    opacity: 0.06;
+    z-index: 0;
+  }
+  .report-card:hover { transform: translateY(-2px); }
+  .report-card > * { position: relative; z-index: 1; }
+
+  .report-card.blue {
+    background: linear-gradient(135deg, rgba(37,99,235,0.15), rgba(37,99,235,0.05));
+    border-color: rgba(96,165,250,0.2);
+    box-shadow: 0 0 40px rgba(37,99,235,0.08), var(--shadow);
+  }
+  .report-card.blue::before { background: var(--blue); }
+  .report-card.purple {
+    background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(124,58,237,0.05));
+    border-color: rgba(167,139,250,0.2);
+    box-shadow: 0 0 40px rgba(124,58,237,0.08), var(--shadow);
+  }
+  .report-card.purple::before { background: var(--purple); }
+  .report-card.green {
+    background: linear-gradient(135deg, rgba(22,163,74,0.15), rgba(22,163,74,0.05));
+    border-color: rgba(34,197,94,0.2);
+    box-shadow: 0 0 40px rgba(22,163,74,0.08), var(--shadow);
+  }
+  .report-card.green::before { background: var(--green); }
+
+  .report-icon { font-size: 1.6rem; margin-bottom: 10px; display: block; }
+  .report-label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+  }
+  .report-value {
+    font-family: var(--mono);
+    font-size: 1.45rem;
+    font-weight: 600;
+    line-height: 1;
+  }
+  .report-card.blue .report-value { color: var(--blue-bright); }
+  .report-card.purple .report-value { color: var(--purple-bright); }
+  .report-card.green .report-value { color: var(--green-bright); }
+  .report-sub {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+    font-family: var(--mono);
+  }
+
+  /* ─── FORM CARD ─── */
+  .form-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 480px) { .form-grid { grid-template-columns: 1fr; } }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+  }
+  .form-input {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-family: var(--font);
+    font-size: 0.95rem;
+    padding: 11px 14px;
+    width: 100%;
+    transition: var(--transition);
+    outline: none;
+    -webkit-appearance: none;
+  }
+  .form-input::placeholder { color: var(--text-muted); }
+  .form-input:focus {
+    border-color: rgba(34,197,94,0.5);
+    box-shadow: 0 0 0 3px rgba(34,197,94,0.08);
+    background: rgba(10,24,40,0.9);
+  }
+  .form-input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .form-input.error { border-color: rgba(220,38,38,0.6); }
+
+  .cost-hint {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 4px;
+  }
+  .cost-diff {
+    font-size: 0.75rem;
+    font-family: var(--mono);
+    padding: 3px 8px;
+    border-radius: 6px;
+    transition: var(--transition);
+  }
+  .cost-diff.positive { background: rgba(34,197,94,0.12); color: var(--green-bright); }
+  .cost-diff.negative { background: rgba(220,38,38,0.12); color: var(--red-bright); }
+  .cost-diff.zero { background: rgba(74,106,138,0.12); color: var(--text-muted); }
+
+  .btn-save {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 13px 24px;
+    font-family: var(--font);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 4px 20px rgba(22,163,74,0.3);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-save::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+    opacity: 0;
+    transition: var(--transition);
+  }
+  .btn-save:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(22,163,74,0.45); }
+  .btn-save:hover::after { opacity: 1; }
+  .btn-save:active { transform: translateY(0); box-shadow: 0 2px 12px rgba(22,163,74,0.3); }
+  .btn-save.loading { opacity: 0.7; pointer-events: none; }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--bg-card2);
+    border: 1px solid var(--border-bright);
+    color: var(--text-primary);
+    padding: 12px 22px;
+    border-radius: 50px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    z-index: 9999;
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s;
+    opacity: 0;
+    white-space: nowrap;
+    box-shadow: var(--shadow-lg);
+    pointer-events: none;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .toast.success { border-color: rgba(34,197,94,0.3); }
+  .toast.error { border-color: rgba(220,38,38,0.3); }
+
+  /* ─── HISTORY ─── */
+  .history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .history-count {
+    font-size: 0.72rem;
+    font-family: var(--mono);
+    color: var(--text-muted);
+    background: var(--bg-card);
+    padding: 3px 9px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .history-list::-webkit-scrollbar { width: 4px; }
+  .history-list::-webkit-scrollbar-track { background: transparent; }
+  .history-list::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 4px; }
+
+  .entry-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+    transition: var(--transition);
+    animation: slideIn 0.3s ease;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .entry-card:hover { border-color: var(--border-bright); background: var(--bg-card2); }
+
+  .entry-main { display: flex; flex-direction: column; gap: 4px; }
+  .entry-note {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .entry-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .entry-date {
+    font-size: 0.73rem;
+    color: var(--text-muted);
+    font-family: var(--mono);
+  }
+  .entry-bike-cost {
+    font-size: 0.73rem;
+    color: var(--text-secondary);
+    font-family: var(--mono);
+  }
+  .entry-bike-cost span { color: var(--yellow-bright); }
+
+  .entry-right { display: flex; align-items: center; gap: 10px; }
+  .entry-saving {
+    font-family: var(--mono);
+    font-size: 1.05rem;
+    font-weight: 600;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .entry-saving.positive { color: var(--green-bright); }
+  .entry-saving.negative { color: var(--red-bright); }
+  .entry-saving.zero { color: var(--text-muted); }
+  .entry-saving small {
+    display: block;
+    font-size: 0.63rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+
+  .btn-delete {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    transition: var(--transition);
+    flex-shrink: 0;
+  }
+  .btn-delete:hover { background: rgba(220,38,38,0.12); border-color: rgba(220,38,38,0.3); color: var(--red-bright); }
+
+  /* ─── EMPTY STATE ─── */
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text-muted);
+  }
+  .empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.5; }
+  .empty-state p { font-size: 0.9rem; line-height: 1.6; }
+
+  /* ─── MODAL ─── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius);
+    padding: 28px;
+    max-width: 380px;
+    width: 100%;
+    transform: scale(0.9);
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    box-shadow: var(--shadow-lg);
+  }
+  .modal-overlay.open .modal { transform: scale(1); }
+  .modal-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+  }
+  .modal-body { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 24px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .btn-cancel {
+    padding: 9px 18px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); background: transparent;
+    color: var(--text-secondary); font-family: var(--font); font-size: 0.88rem;
+    cursor: pointer; transition: var(--transition);
+  }
+  .btn-cancel:hover { border-color: var(--border-bright); color: var(--text-primary); }
+  .btn-confirm-danger {
+    padding: 9px 18px; border-radius: var(--radius-sm);
+    border: 1px solid rgba(220,38,38,0.4); background: rgba(220,38,38,0.1);
+    color: var(--red-bright); font-family: var(--font); font-size: 0.88rem; font-weight: 600;
+    cursor: pointer; transition: var(--transition);
+  }
+  .btn-confirm-danger:hover { background: rgba(220,38,38,0.2); border-color: rgba(220,38,38,0.6); }
+
+  /* ─── EXPORT/IMPORT SECTION ─── */
+  .action-bar {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 28px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .btn-action {
+    flex: 1; min-width: 110px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg-input);
+    color: var(--text-secondary);
+    font-family: var(--font);
+    font-size: 0.83rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    white-space: nowrap;
+  }
+  .btn-action:hover { border-color: var(--border-bright); color: var(--text-primary); background: var(--bg-card2); }
+  .btn-action.danger:hover { border-color: rgba(220,38,38,0.4); color: var(--red-bright); background: rgba(220,38,38,0.06); }
+  .btn-action.export:hover { border-color: rgba(34,197,94,0.4); color: var(--green-bright); background: rgba(34,197,94,0.06); }
+
+  /* ─── PWA INSTALL BANNER ─── */
+  .pwa-banner {
+    display: none;
+    background: linear-gradient(135deg, rgba(22,163,74,0.15), rgba(37,99,235,0.1));
+    border: 1px solid rgba(34,197,94,0.2);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .pwa-banner.show { display: flex; }
+  .pwa-banner-text { font-size: 0.85rem; color: var(--text-secondary); }
+  .pwa-banner-text strong { color: var(--text-primary); }
+  .btn-install {
+    padding: 8px 16px; border-radius: var(--radius-sm);
+    border: 1px solid rgba(34,197,94,0.4); background: rgba(34,197,94,0.1);
+    color: var(--green-bright); font-family: var(--font); font-size: 0.82rem; font-weight: 600;
+    cursor: pointer; transition: var(--transition); white-space: nowrap;
+  }
+  .btn-install:hover { background: rgba(34,197,94,0.2); }
+
+  #csvImportInput { display: none; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 380px) {
+    .report-value { font-size: 1.2rem; }
+    .action-bar { flex-direction: column; }
+    .btn-action { flex: none; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <span>সেভিংস ট্র্যাকার</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn-icon" onclick="toggleTheme()" title="থিম">🌓</button>
+    </div>
+  </div>
+</header>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">নিশ্চিত করুন</div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">বাতিল</button>
+      <button class="btn-confirm-danger" id="modalConfirmBtn">হ্যাঁ, করুন</button>
+    </div>
+  </div>
+</div>
+
+<main>
+  <!-- PWA INSTALL BANNER -->
+  <div class="pwa-banner" id="pwaBanner">
+    <div class="pwa-banner-text"><strong>অ্যাপ ইনস্টল করুন</strong><br>হোম স্ক্রিনে যোগ করুন, সম্পূর্ণ অফলাইনে কাজ করবে।</div>
+    <button class="btn-install" onclick="installPWA()">ইনস্টল</button>
+  </div>
+
+  <!-- REPORT SUMMARY -->
+  <div class="section-title">📊 সেভিংস রিপোর্ট</div>
+  <div class="report-grid">
+    <div class="report-card blue">
+      <span class="report-icon">📅</span>
+      <div class="report-label">এই মাস</div>
+      <div class="report-value" id="monthlySaving">৳০</div>
+      <div class="report-sub" id="monthlyEntries">০ টি ট্রিপ</div>
+    </div>
+    <div class="report-card purple">
+      <span class="report-icon">📆</span>
+      <div class="report-label">এই বছর</div>
+      <div class="report-value" id="yearlySaving">৳০</div>
+      <div class="report-sub" id="yearlyEntries">০ টি ট্রিপ</div>
+    </div>
+    <div class="report-card green">
+      <span class="report-icon">🏆</span>
+      <div class="report-label">লাইফটাইম</div>
+      <div class="report-value" id="lifetimeSaving">৳০</div>
+      <div class="report-sub" id="lifetimeEntries">০ টি ট্রিপ</div>
+    </div>
+  </div>
+
+  <!-- ADD ENTRY FORM -->
+  <div class="section-title">➕ নতুন এন্ট্রি</div>
+  <div class="form-card">
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">তারিখ</label>
+        <input type="date" class="form-input" id="entryDate">
+      </div>
+      <div class="form-group">
+        <label class="form-label">নোট / বিবরণ</label>
+        <input type="text" class="form-input" id="note" placeholder="যেমন: বাজার" maxlength="60">
+      </div>
+      <div class="form-group">
+        <label class="form-label">বাইক খরচ (৳)</label>
+        <input type="number" class="form-input" id="bikeCost" placeholder="০" min="0" step="0.5">
+      </div>
+      <div class="form-group">
+        <label class="form-label">বিকল্প খরচ (৳)</label>
+        <input type="number" class="form-input" id="altCost" placeholder="০" min="0" step="0.5">
+        <div class="cost-hint">
+          <div class="cost-diff zero" id="savingPreview">সাশ্রয়: ৳০</div>
+        </div>
+      </div>
+      <button class="btn-save full" id="saveBtn" onclick="saveEntry()">
+        <span>💾</span> ডাটা সেভ করুন
+      </button>
+    </div>
+  </div>
+
+  <!-- ACTION BAR -->
+  <div class="action-bar">
+    <button class="btn-action export" onclick="exportCSV()">📤 CSV এক্সপোর্ট</button>
+    <button class="btn-action" onclick="document.getElementById('csvImportInput').click()">📥 CSV ইমপোর্ট</button>
+    <button class="btn-action danger" onclick="confirmReset()">🗑️ সব মুছুন</button>
+    <input type="file" id="csvImportInput" accept=".csv" onchange="importCSV(event)">
+  </div>
+
+  <!-- HISTORY -->
+  <div class="history-header">
+    <div class="section-title" style="margin-bottom:0">📋 ইতিহাস</div>
+    <div class="history-count" id="historyCount">০ টি এন্ট্রি</div>
+  </div>
+  <div class="history-list" id="historyList">
+    <div class="empty-state">
+      <div class="empty-icon">🚴</div>
+      <p>কোনো এন্ট্রি নেই।<br>প্রথম ট্রিপ যোগ করুন!</p>
+    </div>
+  </div>
+</main>
+
+<!-- SERVICE WORKER SCRIPT (INLINE PWA) -->
+<script>
+// ══════════════════════════════════════════════════════════
+//  E-BIKE SAVINGS TRACKER — Full App Script
+// ══════════════════════════════════════════════════════════
+
+const DB_NAME = 'ebike_savings_db';
+const DB_VERSION = 1;
+const STORE = 'entries';
+let db = null;
+let entries = [];
+let deferredInstallPrompt = null;
+
+// ─── IndexedDB Setup ─────────────────────────────────────
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE)) {
+        const store = db.createObjectStore(STORE, { keyPath: 'id', autoIncrement: true });
+        store.createIndex('date', 'date', { unique: false });
+      }
+    };
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror = e => reject(e.target.error);
+  });
+}
+
+function getAllEntries() {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, 'readonly');
+    const req = tx.objectStore(STORE).getAll();
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror = e => reject(e.target.error);
+  });
+}
+
+function addEntry(entry) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, 'readwrite');
+    const req = tx.objectStore(STORE).add(entry);
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror = e => reject(e.target.error);
+  });
+}
+
+function deleteEntry(id) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, 'readwrite');
+    const req = tx.objectStore(STORE).delete(id);
+    req.onsuccess = () => resolve();
+    req.onerror = e => reject(e.target.error);
+  });
+}
+
+function clearAllEntries() {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, 'readwrite');
+    const req = tx.objectStore(STORE).clear();
+    req.onsuccess = () => resolve();
+    req.onerror = e => reject(e.target.error);
+  });
+}
+
+// ─── Init ─────────────────────────────────────────────────
+async function init() {
+  try {
+    db = await openDB();
+    entries = await getAllEntries();
+    setDefaultDate();
+    setupLivePreview();
+    renderAll();
+  } catch (err) {
+    showToast('❌ ডেটাবেস খুলতে সমস্যা হয়েছে', 'error');
+    console.error(err);
+  }
+}
+
+function setDefaultDate() {
+  const d = document.getElementById('entryDate');
+  d.value = new Date().toISOString().split('T')[0];
+}
+
+function setupLivePreview() {
+  const bike = document.getElementById('bikeCost');
+  const alt = document.getElementById('altCost');
+  const preview = document.getElementById('savingPreview');
+
+  function update() {
+    const b = parseFloat(bike.value) || 0;
+    const a = parseFloat(alt.value) || 0;
+    const saving = a - b;
+    preview.textContent = saving >= 0 ? `সাশ্রয়: ৳${fmt(saving)}` : `ক্ষতি: ৳${fmt(Math.abs(saving))}`;
+    preview.className = 'cost-diff ' + (saving > 0 ? 'positive' : saving < 0 ? 'negative' : 'zero');
+  }
+  bike.addEventListener('input', update);
+  alt.addEventListener('input', update);
+}
+
+// ─── Save Entry ───────────────────────────────────────────
+async function saveEntry() {
+  const dateEl = document.getElementById('entryDate');
+  const noteEl = document.getElementById('note');
+  const bikeEl = document.getElementById('bikeCost');
+  const altEl = document.getElementById('altCost');
+
+  // Validate
+  [dateEl, bikeEl, altEl].forEach(el => el.classList.remove('error'));
+  let valid = true;
+
+  if (!dateEl.value) { dateEl.classList.add('error'); valid = false; }
+  if (bikeEl.value === '' || isNaN(parseFloat(bikeEl.value))) { bikeEl.classList.add('error'); valid = false; }
+  if (altEl.value === '' || isNaN(parseFloat(altEl.value))) { altEl.classList.add('error'); valid = false; }
+
+  if (!valid) { showToast('⚠️ তারিখ ও খরচ পূরণ করুন', 'error'); return; }
+
+  const entry = {
+    date: dateEl.value,
+    note: noteEl.value.trim() || 'অন্যান্য',
+    bikeCost: parseFloat(bikeEl.value),
+    altCost: parseFloat(altEl.value),
+    saving: parseFloat(altEl.value) - parseFloat(bikeEl.value),
+    createdAt: Date.now()
+  };
+
+  const btn = document.getElementById('saveBtn');
+  btn.classList.add('loading');
+  btn.innerHTML = '<span>⏳</span> সংরক্ষণ হচ্ছে...';
+
+  try {
+    const id = await addEntry(entry);
+    entry.id = id;
+    entries.unshift(entry);
+    entries.sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
+    renderAll();
+
+    // Clear form
+    noteEl.value = '';
+    bikeEl.value = '';
+    altEl.value = '';
+    setDefaultDate();
+    document.getElementById('savingPreview').textContent = 'সাশ্রয়: ৳০';
+    document.getElementById('savingPreview').className = 'cost-diff zero';
+
+    showToast('✅ এন্ট্রি সেভ হয়েছে', 'success');
+  } catch (err) {
+    showToast('❌ সেভ করতে সমস্যা হয়েছে', 'error');
+    console.error(err);
+  } finally {
+    btn.classList.remove('loading');
+    btn.innerHTML = '<span>💾</span> ডাটা সেভ করুন';
+  }
+}
+
+// ─── Delete Entry ─────────────────────────────────────────
+function confirmDelete(id, note) {
+  openModal(
+    '🗑️ এন্ট্রি মুছুন',
+    `"${note}" — এই এন্ট্রিটি মুছে ফেলতে চান? এটি পূর্বাবস্থায় ফেরানো যাবে না।`,
+    async () => {
+      try {
+        await deleteEntry(id);
+        entries = entries.filter(e => e.id !== id);
+        renderAll();
+        showToast('🗑️ এন্ট্রি মুছে গেছে', 'success');
+      } catch (err) {
+        showToast('❌ মুছতে সমস্যা হয়েছে', 'error');
+      }
+    }
+  );
+}
+
+// ─── Reset All ────────────────────────────────────────────
+function confirmReset() {
+  openModal(
+    '⚠️ সব ডাটা মুছুন',
+    'আপনার সমস্ত এন্ট্রি মুছে ফেলা হবে। এই কাজ আর ফেরানো যাবে না। আপনি কি নিশ্চিত?',
+    async () => {
+      try {
+        await clearAllEntries();
+        entries = [];
+        renderAll();
+        showToast('🗑️ সব ডাটা মুছে গেছে', 'success');
+      } catch (err) {
+        showToast('❌ রিসেট করতে সমস্যা হয়েছে', 'error');
+      }
+    }
+  );
+}
+
+// ─── Render ───────────────────────────────────────────────
+function renderAll() {
+  renderSummary();
+  renderHistory();
+}
+
+function renderSummary() {
+  const now = new Date();
+  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const thisYear = `${now.getFullYear()}`;
+
+  const monthly = entries.filter(e => e.date.startsWith(thisMonth));
+  const yearly = entries.filter(e => e.date.startsWith(thisYear));
+  const lifetime = entries;
+
+  const sum = arr => arr.reduce((s, e) => s + (e.saving || 0), 0);
+
+  document.getElementById('monthlySaving').textContent = `৳${fmt(sum(monthly))}`;
+  document.getElementById('monthlyEntries').textContent = `${monthly.length} টি ট্রিপ`;
+  document.getElementById('yearlySaving').textContent = `৳${fmt(sum(yearly))}`;
+  document.getElementById('yearlyEntries').textContent = `${yearly.length} টি ট্রিপ`;
+  document.getElementById('lifetimeSaving').textContent = `৳${fmt(sum(lifetime))}`;
+  document.getElementById('lifetimeEntries').textContent = `${lifetime.length} টি ট্রিপ`;
+}
+
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  const count = document.getElementById('historyCount');
+  count.textContent = `${entries.length} টি এন্ট্রি`;
+
+  if (entries.length === 0) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">🚴</div><p>কোনো এন্ট্রি নেই।<br>প্রথম ট্রিপ যোগ করুন!</p></div>`;
+    return;
+  }
+
+  const sorted = [...entries].sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
+  list.innerHTML = sorted.map(e => {
+    const saving = e.saving || (e.altCost - e.bikeCost);
+    const cls = saving > 0 ? 'positive' : saving < 0 ? 'negative' : 'zero';
+    const sign = saving > 0 ? '+' : '';
+    return `
+    <div class="entry-card" id="entry-${e.id}">
+      <div class="entry-main">
+        <div class="entry-note">${esc(e.note)}</div>
+        <div class="entry-meta">
+          <span class="entry-date">📅 ${formatDate(e.date)}</span>
+          <span class="entry-bike-cost">⚡ বাইক: <span>৳${fmt(e.bikeCost)}</span></span>
+          <span class="entry-bike-cost">🛺 বিকল্প: <span>৳${fmt(e.altCost)}</span></span>
+        </div>
+      </div>
+      <div class="entry-right">
+        <div class="entry-saving ${cls}">
+          ${sign}৳${fmt(Math.abs(saving))}
+          <small>সাশ্রয়</small>
+        </div>
+        <button class="btn-delete" onclick="confirmDelete(${e.id}, '${esc(e.note)}')" title="মুছুন">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── Export CSV ───────────────────────────────────────────
+function exportCSV() {
+  if (entries.length === 0) { showToast('⚠️ কোনো এন্ট্রি নেই', 'error'); return; }
+  const header = 'id,date,note,bikeCost,altCost,saving,createdAt';
+  const rows = entries.map(e =>
+    [e.id, e.date, `"${(e.note||'').replace(/"/g,'""')}"`, e.bikeCost, e.altCost, e.saving, e.createdAt].join(',')
+  );
+  const csv = [header, ...rows].join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ebike-savings-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('📤 CSV এক্সপোর্ট হয়েছে', 'success');
+}
+
+// ─── Import CSV ───────────────────────────────────────────
+function importCSV(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    try {
+      const lines = e.target.result.replace(/^\uFEFF/, '').split('\n').filter(l => l.trim());
+      const headers = lines[0].split(',');
+      const dateIdx = headers.indexOf('date');
+      const noteIdx = headers.indexOf('note');
+      const bikeIdx = headers.indexOf('bikeCost');
+      const altIdx = headers.indexOf('altCost');
+      if (dateIdx === -1 || bikeIdx === -1 || altIdx === -1) {
+        showToast('❌ CSV ফরম্যাট সঠিক নয়', 'error'); return;
+      }
+      let imported = 0;
+      for (let i = 1; i < lines.length; i++) {
+        const cols = parseCSVLine(lines[i]);
+        const entry = {
+          date: cols[dateIdx],
+          note: (cols[noteIdx] || 'অন্যান্য').replace(/^"|"$/g, ''),
+          bikeCost: parseFloat(cols[bikeIdx]) || 0,
+          altCost: parseFloat(cols[altIdx]) || 0,
+          saving: parseFloat(cols[altIdx]||0) - parseFloat(cols[bikeIdx]||0),
+          createdAt: Date.now() + i
+        };
+        if (!entry.date) continue;
+        await addEntry(entry);
+        imported++;
+      }
+      entries = await getAllEntries();
+      renderAll();
+      showToast(`✅ ${imported} টি এন্ট্রি ইমপোর্ট হয়েছে`, 'success');
+    } catch (err) {
+      showToast('❌ ইমপোর্ট করতে সমস্যা', 'error');
+      console.error(err);
+    }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function parseCSVLine(line) {
+  const result = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') { inQ = !inQ; }
+    else if (c === ',' && !inQ) { result.push(cur); cur = ''; }
+    else cur += c;
+  }
+  result.push(cur);
+  return result;
+}
+
+// ─── Modal ────────────────────────────────────────────────
+let modalCallback = null;
+function openModal(title, body, onConfirm) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalBody').textContent = body;
+  modalCallback = onConfirm;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('modalConfirmBtn').onclick = () => { closeModal(); modalCallback && modalCallback(); };
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+document.getElementById('modalOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+});
+
+// ─── Toast ────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.classList.remove('show'); }, 2800);
+}
+
+// ─── Helpers ─────────────────────────────────────────────
+function fmt(n) {
+  if (isNaN(n)) return '০';
+  return Number(n).toLocaleString('bn-BD', { minimumFractionDigits: 0, maximumFractionDigits: 1 });
+}
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function formatDate(d) {
+  if (!d) return '';
+  const [y, m, day] = d.split('-');
+  const months = ['জানু','ফেব','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+  return `${parseInt(day)} ${months[parseInt(m)-1]}, ${y}`;
+}
+
+// ─── PWA ─────────────────────────────────────────────────
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  document.getElementById('pwaBanner').classList.add('show');
+});
+function installPWA() {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  deferredInstallPrompt.userChoice.then(() => {
+    deferredInstallPrompt = null;
+    document.getElementById('pwaBanner').classList.remove('show');
+  });
+}
+
+// ─── Theme Toggle ─────────────────────────────────────────
+let lightMode = false;
+function toggleTheme() {
+  lightMode = !lightMode;
+  if (lightMode) {
+    document.documentElement.style.setProperty('--bg-deep', '#f0f4f8');
+    document.documentElement.style.setProperty('--bg-card', '#ffffff');
+    document.documentElement.style.setProperty('--bg-card2', '#f8fafc');
+    document.documentElement.style.setProperty('--bg-input', '#f1f5f9');
+    document.documentElement.style.setProperty('--border', 'rgba(0,0,0,0.08)');
+    document.documentElement.style.setProperty('--border-bright', 'rgba(0,0,0,0.15)');
+    document.documentElement.style.setProperty('--text-primary', '#0f172a');
+    document.documentElement.style.setProperty('--text-secondary', '#334155');
+    document.documentElement.style.setProperty('--text-muted', '#94a3b8');
+  } else {
+    document.documentElement.style.removeProperty('--bg-deep');
+    document.documentElement.style.removeProperty('--bg-card');
+    document.documentElement.style.removeProperty('--bg-card2');
+    document.documentElement.style.removeProperty('--bg-input');
+    document.documentElement.style.removeProperty('--border');
+    document.documentElement.style.removeProperty('--border-bright');
+    document.documentElement.style.removeProperty('--text-primary');
+    document.documentElement.style.removeProperty('--text-secondary');
+    document.documentElement.style.removeProperty('--text-muted');
+  }
+}
+
+// ─── Service Worker Registration ─────────────────────────
+if ('serviceWorker' in navigator) {
+  const swCode = `
+const CACHE = 'ebike-v1';
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./'])));
+  self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))));
+  self.clients.claim();
+});
+self.addEventListener('fetch', e => {
+  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match('./'))));
+});
+`;
+  const blob = new Blob([swCode], { type: 'application/javascript' });
+  const swURL = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swURL).catch(() => {});
+}
+
+// ─── START ────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
